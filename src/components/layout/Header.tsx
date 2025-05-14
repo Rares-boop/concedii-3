@@ -13,8 +13,8 @@ export default function Header() {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [jwt, setJwt] = useState<string | null>(
-  typeof window !== "undefined" ? localStorage.getItem("jwt") : null
-);
+    typeof window !== "undefined" ? localStorage.getItem("jwt") : null
+  );
 
 
   // ✅ Listen for authentication updates
@@ -89,16 +89,20 @@ export default function Header() {
             </Link>
           </nav>
         )}
+
+        {/* Admin Panel Button - Styled Same as Concedii */}
+        {user?.role?.name === "Admin" && (
+          <Link href="/admin" className="header__button concedii-btn">
+            Admin Panel
+          </Link>
+        )}
       </div>
 
       {/* Right Section (User & Logout) */}
       <div className="header__right">
         {jwt && user ? (
           <>
-            {/* Admin Users See Admin Panel */}
-            {user?.role?.name === "Admin" && (
-              <Link href="/admin" className="header__button">Admin Panel</Link>
-            )}
+
 
             <Link href="/user" className="header__user-email">{user.email}</Link>
             <button className="logout-button" onClick={handleLogout}>Logout</button>
