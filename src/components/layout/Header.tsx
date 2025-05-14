@@ -1,20 +1,34 @@
 "use client";
-
-import { useUser } from "@/app/login/UserContext";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getHeaderData } from "@/utils/fetch-header";
-import { Header as HeaderType } from "@/types";
+import { Header as HeaderType, User } from "@/types";
 import { StrapiImage } from "@/components/StrapiImage";
-import { useEffect, useState } from "react";
-import { User } from "@/types";
+import { fetchApi } from "@/utils/fetch-api";
 
 export default function Header() {
-  const userContext = useUser(); // Provides userPromise & refreshUser function
   const router = useRouter();
   const [header, setHeader] = useState<HeaderType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [jwt, setJwt] = useState<string | null>(
+  typeof window !== "undefined" ? localStorage.getItem("jwt") : null
+);
+
+
+  // ✅ Listen for authentication updates
+  useEffect(() => {
+    const updateAuthState = () => {
+      setJwt(localStorage.getItem("jwt")); // ✅ Updates JWT when login/logout happens
+    };
+
+    window.addEventListener("authUpdated", updateAuthState);
+
+    return () => {
+      window.removeEventListener("authUpdated", updateAuthState);
+    };
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -22,28 +36,39 @@ export default function Header() {
         const { header: headerData } = await getHeaderData();
         setHeader(headerData);
 
-        // Resolve user Promise and set state
-        const resolvedUser = await userContext?.userPromise;
-        if (resolvedUser !== undefined) {
-          setUser(resolvedUser);
+        if (jwt) {
+          const userData = await fetchApi("users/me?populate=role", {
+            headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
+          });
+          setUser(userData);
+        } else {
+          setUser(null); // ✅ Ensures logout clears user state
         }
       } catch (err) {
         setError("Failed to fetch header data");
+        console.error("❌ Error:", err);
       }
     }
+
     fetchData();
-  }, [userContext?.userPromise]);
+  }, [jwt]); // ✅ Re-fetch when JWT changes
 
   function handleLogout() {
-    localStorage.removeItem("user");
-    userContext?.refreshUser(); // ✅ Triggers an immediate state update
+    localStorage.removeItem("jwt"); // ✅ Remove JWT
+    setUser(null); // ✅ Clears user state
+
+    window.dispatchEvent(new Event("authUpdated")); // ✅ Notify header to update
     router.push("/login");
   }
 
-  console.log("User Context (Promise Resolved):", user); // Debugging
-
   if (error) return <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>;
   if (!header) return null;
+
+  console.log("🔍 JWT from localStorage:", localStorage.getItem("jwt"));
+  console.log("🔍 User data:", user);
+
+
+
 
   return (
     <header className="header">
@@ -68,11 +93,18 @@ export default function Header() {
 
       {/* Right Section (User & Logout) */}
       <div className="header__right">
-        {user?.jwt && (
+        {jwt && user ? (
           <>
+            {/* Admin Users See Admin Panel */}
+            {user?.role?.name === "Admin" && (
+              <Link href="/admin" className="header__button">Admin Panel</Link>
+            )}
+
             <Link href="/user" className="header__user-email">{user.email}</Link>
             <button className="logout-button" onClick={handleLogout}>Logout</button>
           </>
+        ) : (
+          <p style={{ color: "red", fontWeight: "bold" }}>❌ User not logged in!</p>
         )}
       </div>
     </header>

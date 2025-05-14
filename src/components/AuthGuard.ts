@@ -7,16 +7,15 @@ interface AuthGuardProps {
 }
 
 export default function AuthGuard({ children }: AuthGuardProps) {
-    const router = useRouter();
-  
-    useEffect(() => {
-      const user = localStorage.getItem("user");
-  
-      if (!user) {
-        router.push("/login");
-      }
-    }, []);
-  
-    return children; 
-  }
-  
+  const router = useRouter();
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt"); // ✅ Check standalone JWT
+
+    if (!jwt) {
+      router.push("/login"); // ✅ Redirect if JWT is missing
+    }
+  }, [router]);
+
+  return children;
+}

@@ -17,13 +17,16 @@ export interface Link {
   image: { url: string };
 } */}
 
+
 export interface User {
   email: string;
-  jwt: string; // ✅ Stores authentication token
-  href?: string; // Mark href as optional, unless required
-  isExternal?: boolean; // Optional external flag
-  image?: { url: string }; // Optional image data
+  jwt: string; 
+  href?: string; 
+  isExternal?: boolean;
+  role?: {name: string}; 
+  image?: { url: string }; 
 }
+
 
 export interface Header {
   logo: Logo;

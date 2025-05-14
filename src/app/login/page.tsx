@@ -12,11 +12,11 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const user = localStorage.getItem("user");
-        if (user) router.push("/");
+        const jwt = localStorage.getItem("jwt");
+        if (jwt) router.push("/");
     }, [router]);
 
-    {/*} async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setLoading(true);
 
@@ -37,69 +37,39 @@ export default function LoginPage() {
                 body: JSON.stringify({ identifier: email, password }),
             });
 
-            if (!result.jwt) throw new Error("Invalid credentials");
+            console.log("🔍 Login API Response:", result);
 
-            saveUserSession(result);
+            if (!result.jwt) {
+                throw new Error("Invalid credentials");
+            }
+
+            saveUserSession(result.jwt); // ✅ Save JWT
+            userContext?.refreshUser(); // ✅ Update context
+
+            window.dispatchEvent(new Event("authUpdated")); // ✅ Trigger header update event
             router.push("/");
         } catch (err) {
             setError(err instanceof Error ? err.message : "An unknown error occurred.");
         } finally {
             setLoading(false);
         }
-    } */}
+    }
 
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        setLoading(true);
-    
-        const formData = new FormData(event.currentTarget);
-        const email = formData.get("email")?.toString();
-        const password = formData.get("password")?.toString();
-    
-        if (!email || !password) {
-          setError("Email and password are required.");
-          setLoading(false);
-          return;
+    function saveUserSession(jwt: string) {
+        if (!jwt) {
+            console.error("❌ Missing JWT in login response!");
+            return;
         }
-    
-        try {
-          const result = await fetchApi("auth/local", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ identifier: email, password }),
-          });
-    
-          if (!result.jwt) throw new Error("Invalid credentials");
-    
-          saveUserSession(result);
-          userContext?.refreshUser(); // ✅ Fix: Ensure `userContext` is accessed correctly
-    
-          router.push("/");
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "An unknown error occurred.");
-        } finally {
-          setLoading(false);
-        }
-    }   
 
-     
-    {/* function saveUserSession(userData: any) {
-        localStorage.setItem("user", JSON.stringify({
-            jwt: userData.jwt,
-        }));
-    } */}
+        console.log("🔍 Storing standalone JWT:", jwt); // ✅ Debugging log
 
-    function saveUserSession(userData: any) {
-        if (!userData || !userData.jwt) return;
-        localStorage.setItem("user", JSON.stringify({
-          jwt: userData.jwt, // ✅ Ensures JWT is stored
-          email: userData.user.email,
-          image: userData.user.image, // If your API provides an image
-        }));
-      }           
+        localStorage.setItem("jwt", jwt); // ✅ Store only the JWT
+        window.dispatchEvent(new Event("authUpdated")); // ✅ Ensure header updates immediately
+    }
 
     function handleLogout() {
-        localStorage.removeItem("user");
+        localStorage.removeItem("jwt"); // ✅ Remove JWT
+        window.dispatchEvent(new Event("authUpdated")); // ✅ Notify header to update
         router.push("/login");
     }
 
