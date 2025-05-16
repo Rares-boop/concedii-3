@@ -19,12 +19,27 @@ export interface Link {
 
 
 export interface User {
+  id: string;
   email: string;
   jwt: string; 
   href?: string; 
   isExternal?: boolean;
   role?: {name: string}; 
   image?: { url: string }; 
+  leaveDays?: LeaveDays[];
+}
+
+export enum RequestStatus {
+  PENDING = "Pending",
+  APPROVED = "Approved",
+  REJECTED = "Rejected",
+}
+
+export interface LeaveDays {
+  firstDay: string;
+  lastDay: string;
+  addedAt: string;
+  status: RequestStatus;
 }
 
 

@@ -198,3 +198,19 @@ nav a:hover {
     background-color: darkred;
 }
 
+.container {
+  display: flex; /* ✅ Aligns components horizontally */
+  gap: 20px; /* ✅ Adds spacing between calendar & leave list */
+  justify-content: space-between; /* ✅ Ensures even spacing */
+  align-items: flex-start; /* ✅ Keeps items aligned at the top */
+}
+
+.calendar {
+  flex: 1; /* ✅ Takes space on the left */
+}
+
+.leave-list {
+  flex: -2; /* ✅ Moves the list to the right */
+}
+
+

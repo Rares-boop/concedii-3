@@ -22,6 +22,8 @@ export async function fetchApi<T = any>(
 
   const response = await fetch(fetchUrl, fetchOptions);
 
+  console.log(response);
+
   if (!response.ok) {
     const errorText = await response.text(); // Debugging actual API response
     throw new Error(`Failed to fetch: ${fetchUrl} (${response.status} ${response.statusText}) - ${errorText}`);
