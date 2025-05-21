@@ -1,0 +1,16 @@
+.content-layout {
+    display: flex;
+    justify-content: space-between; /* Aligns left & right */
+    align-items: flex-start;
+    width: 100%;
+    gap: 20px;
+}
+
+.calendar-container {
+    flex: 1; /* Ensures DatePicker stays on the left */
+}
+
+.leave-container {
+    flex: 1; /* Ensures Lista Concedii stays on the right */
+    text-align: left;
+}

@@ -1,6 +1,5 @@
 import AuthGuard from "@/components/AuthGuard";
 import ConcediiWrapper from "@/components/ConcediiWrapper"; 
-import ListaConcedii from "@/components/layout/ListaConcedii";
 import { getLeaveDays } from "@/utils/fetch-leaveDays";
 
 export default async function ConcediiPage() {
@@ -9,9 +8,7 @@ export default async function ConcediiPage() {
 
     return (
         <AuthGuard>
-            <ConcediiWrapper>
-                <></>
-            </ConcediiWrapper>
+            <ConcediiWrapper />
         </AuthGuard>
     );
 }

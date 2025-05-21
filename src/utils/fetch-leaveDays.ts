@@ -1,5 +1,6 @@
 import { LeaveDays, User } from "@/types";
 import { fetchApi } from "./fetch-api";
+import qs from "qs";
 
 export async function getLeaveDays(): Promise<{ leaveDays?: LeaveDays[]; user?: User }> {
   try {
@@ -10,9 +11,21 @@ export async function getLeaveDays(): Promise<{ leaveDays?: LeaveDays[]; user?: 
     console.log("🔑 JWT Token bytfrt:", jwt);
 
 
-    const userData = await fetchApi("users/me?populate=role&populate=leave_days", {
+    /*const userData = await fetchApi("users/me?populate=role&populate=leave_days", {
         headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
-    });
+    });*/
+
+    const query = qs.stringify(
+    {
+        populate: ["role", "leave_days"],
+    },
+    { encodeValuesOnly: true }
+);
+
+const userData = await fetchApi(`users/me?${query}`, {
+    headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
+});
+
 
     if (!userData?.id) throw new Error("❌ User ID not found in response.");
 

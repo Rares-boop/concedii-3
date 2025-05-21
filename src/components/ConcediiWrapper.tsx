@@ -1,12 +1,19 @@
 import MyDatePicker from "./DatePicker";
 import ListaConcedii from "./layout/ListaConcedii";
 
-export default function ConcediiWrapper({ children }: { children: React.ReactNode }) {
+export default function ConcediiWrapper() {
     return (
-        <div className="wrapper-container">
-            <MyDatePicker />
-            <ListaConcedii />
-            {children}
+        <div className="container">
+            <div className="calendar">
+                <MyDatePicker />
+            </div>
+            <div className="leave-list">
+                <ListaConcedii />
+            </div>
         </div>
     );
 }
+
+
+
+
