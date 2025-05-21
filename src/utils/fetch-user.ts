@@ -13,7 +13,7 @@ export async function getUser(): Promise<{ user?: User }> {
 
   const userQuery = qs.stringify(
     {
-      populate: ["image", "role", "leaveDays"], // ✅ Using array format for population
+      populate: ["role", "leave_days"], // ✅ Using array format for population
     },
     { encodeValuesOnly: true }
   );

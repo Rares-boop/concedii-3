@@ -54,3 +54,8 @@ export interface Footer {
   description: string;
   date: string;
 }
+
+export interface PublicHolidays{
+  holidayName: string;
+  date: string;
+}
