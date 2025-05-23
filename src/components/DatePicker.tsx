@@ -84,12 +84,14 @@ export default function MyDatePicker() {
 
       const leaveRequestData = await leaveRequestResponse.json();
 
-      const leaveRequestId = leaveRequestData.data.id; // ✅ Get leave request ID
+      const leaveRequestId = leaveRequestData.data.documentId;
 
       console.log("✅ Leave request created:", leaveRequestData);
 
-      //const updatedLeaveDays = Array.isArray(user.leaveDays) ? [...user.leaveDays, leaveRequestId] : [leaveRequestId];
-      const updatedLeaveDays = [leaveRequestId];
+      const updatedLeaveDays = [{ documentId: leaveRequestId }]; 
+
+      console.log("LEAVE REQUEST ID ",leaveRequestId);
+      console.log("UPDATE LEAVE DAYS enwc ",updatedLeaveDays);
 
       const updateUserResponse = await fetch(`${process.env.NEXT_PUBLIC_API}/api/users/${user.id}`, {
         method: "PUT",
@@ -99,15 +101,15 @@ export default function MyDatePicker() {
         },
         body: JSON.stringify({
           data: {
-            leave_days: { connect: updatedLeaveDays },
+            leave_days: { connect: updatedLeaveDays } 
           }
         }),
       });
 
-      if (!updateUserResponse.ok) {
-        const errorText = await updateUserResponse.text();
-        throw new Error(`❌ Failed to update user leaveDays: ${updateUserResponse.status} - ${errorText}`);
-      }
+      const responseData = await updateUserResponse.json();
+      console.log("User id ",responseData.id);
+      console.log("✅ User updated:", responseData);
+
 
       console.log("✅ User leaveDays updated successfully!");
       alert("✅ Leave request added and linked to user!");

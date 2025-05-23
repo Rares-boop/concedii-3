@@ -1,8 +1,7 @@
 "use client"
 
-import Image from "next/image";
 import AuthGuard from "@/components/AuthGuard";
-import MyDatePicker from "@/components/DatePicker";
+import MyDatePickerNoButtons from "@/components/DatePickerNoButtons";
 
 
 
@@ -12,8 +11,7 @@ export default function Home() {
     <AuthGuard>
       <div>
       <h1>Welcome to the Home Page</h1>
-      <p>Select a date below:</p>
-      <MyDatePicker></MyDatePicker>
+      <MyDatePickerNoButtons />
       {/* Date Picker Component */}
     </div>
     </AuthGuard>
