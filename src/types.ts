@@ -39,7 +39,7 @@ export interface LeaveDays {
   firstDay: string;
   lastDay: string;
   addedAt: string;
-  status: RequestStatus;
+  statusRequest: RequestStatus;
 }
 
 
