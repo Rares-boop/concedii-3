@@ -8,41 +8,15 @@ import { getUser } from "@/utils/fetch-user";
 import { connect } from "http2";
 
 
-/*async function getUserIdFromLocalStorage() {
-    try {
-        const jwt = localStorage.getItem("jwt");
-        if (!jwt) throw new Error("❌ No JWT found! User might not be authenticated.");
-
-        const response = await fetch("http://localhost:1337/api/users/me", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) throw new Error("❌ Failed to fetch user!");
-
-        const userData = await response.json();
-        return userData.id; // ✅ Get authenticated user's ID
-
-    } catch (error) {
-        console.error("❌ Error fetching user:", error);
-        return null;
-    }
-}*/
-
-
 export default function MyDatePicker() {
   const [selected, setSelected] = useState<DateRange>({ from: undefined, to: undefined });
 
-  // ✅ Reset function to clear the selection
   const handleReset = () => {
     setSelected({ from: undefined, to: undefined });
   };
 
 
-  async function handleAddSelection() {
+  /*async function handleAddSelection() {
     if (!selected.from || !selected.to) {
       alert("⚠️ Please select a date range first!");
       return;
@@ -54,13 +28,11 @@ export default function MyDatePicker() {
 
       const today = new Date().toLocaleDateString("en-CA");
 
-      // ✅ Step 1: Fetch the authenticated user
       const { user } = await getUser();
       if (!user) throw new Error("❌ Failed to retrieve user data!");
 
       console.log("🟢 Authenticated user:", user);
 
-      // ✅ Step 2: Create the leave request
       const leaveRequestResponse = await fetch(`${process.env.NEXT_PUBLIC_API}/api/leave-days`, {
         method: "POST",
         headers: {
@@ -120,6 +92,50 @@ export default function MyDatePicker() {
       console.error("❌ Error adding leave request:", error);
       alert(`❌ Failed to add leave request: ${(error as Error).message}`);
     }
+  }*/
+
+  async function handleAddSelection() {
+    if (!selected.from || !selected.to) {
+      alert("⚠️ Please select a date range first!");
+      return;
+    }
+
+    try {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) throw new Error("❌ No JWT found! User might not be authenticated.");
+
+      const { user } = await getUser();
+      if (!user) throw new Error("❌ Failed to retrieve user data!");
+
+      console.log("🟢 Authenticated user:", user);
+
+      const leaveRequestResponse = await fetch(`${process.env.NEXT_PUBLIC_API}/api/leave-days/add`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstDay: selected.from.toLocaleDateString("en-CA"),
+          lastDay: selected.to.toLocaleDateString("en-CA"),
+        }),
+      });
+
+      if (!leaveRequestResponse.ok) {
+        const errorText = await leaveRequestResponse.text();
+        throw new Error(`❌ Failed to create leave request: ${leaveRequestResponse.status} - ${errorText}`);
+      }
+
+      const result = await leaveRequestResponse.json();
+      console.log("✅ Leave request created & linked:", result);
+
+      alert("✅ Leave request successfully submitted!");
+      setSelected({ from: undefined, to: undefined });
+
+    } catch (error) {
+      console.error("❌ Error adding leave request:", error);
+      alert(`❌ Failed to add leave request: ${(error as Error).message}`);
+    }
   }
 
 
@@ -127,21 +143,19 @@ export default function MyDatePicker() {
     <div>
       <DayPicker
         mode="range"
-        selected={selected} // ✅ Use the predefined DateRange type correctly
-        onSelect={(range) => setSelected(range || { from: undefined, to: undefined })} // ✅ Handles undefined safely
+        selected={selected}
+        onSelect={(range) => setSelected(range || { from: undefined, to: undefined })}
         footer={
           selected.from && selected.to
             ? `Selected range: ${selected.from.toLocaleDateString()} → ${selected.to.toLocaleDateString()}`
             : "Pick a date range."
         }
         required
-        min={2} // ✅ Minimum nights in range
-        max={14} // ✅ Maximum nights in range
+        min={2}
+        max={14}
       />
 
-      {/* ✅ Button Container for Side-by-Side Layout */}
       <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
-        {/* ✅ Reset Button */}
         <button onClick={handleReset} style={{
           padding: "8px 16px",
           backgroundColor: "#ff4d4d",
@@ -154,10 +168,9 @@ export default function MyDatePicker() {
           Reset Selection
         </button>
 
-        {/* ✅ Add Selection Button */}
         <button onClick={handleAddSelection} style={{
           padding: "8px 16px",
-          backgroundColor: "#28a745", // ✅ Green color
+          backgroundColor: "#28a745",
           color: "white",
           border: "none",
           borderRadius: "6px",

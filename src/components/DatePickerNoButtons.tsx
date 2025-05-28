@@ -1,22 +1,27 @@
-"use client";
-
-import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import { DateRange } from "react-day-picker";
 
+interface MyDatePickerNoButtonsProps {
+  selectedDate: Date | undefined;
+  setSelectedDate: (date: Date | undefined) => void;
+}
 
-export default function MyDatePickerNoButtons() {
-  const [selected, setSelected] = useState<Date>();
-
+export default function MyDatePickerNoButtons({
+  selectedDate,
+  setSelectedDate,
+}: MyDatePickerNoButtonsProps) {
   return (
     <DayPicker
-      animate
       mode="single"
-      selected={selected}
-      onSelect={setSelected}
+      required={false}
+      selected={selectedDate}
+      onSelect={setSelectedDate}
       footer={
-        selected ? `Selected: ${selected.toLocaleDateString()}` : "Pick a day."
+        <p style={{ marginTop: "10px", fontSize: "14px", color: "#555" }}>
+          {selectedDate
+            ? `Selected: ${selectedDate.toLocaleDateString()}`
+            : "Pick a day."}
+        </p>
       }
     />
   );

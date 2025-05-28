@@ -1,7 +1,7 @@
 "use client"
 
 import AuthGuard from "@/components/AuthGuard";
-import MyDatePickerNoButtons from "@/components/DatePickerNoButtons";
+import MyDatePickerWithColours from "@/components/DatePickerWithColors";
 
 
 
@@ -11,8 +11,7 @@ export default function Home() {
     <AuthGuard>
       <div>
       <h1>Welcome to the Home Page</h1>
-      <MyDatePickerNoButtons />
-      {/* Date Picker Component */}
+      <MyDatePickerWithColours />
     </div>
     </AuthGuard>
   );

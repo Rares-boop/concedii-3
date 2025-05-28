@@ -17,10 +17,9 @@ export default function Header() {
   );
 
 
-  // ✅ Listen for authentication updates
   useEffect(() => {
     const updateAuthState = () => {
-      setJwt(localStorage.getItem("jwt")); // ✅ Updates JWT when login/logout happens
+      setJwt(localStorage.getItem("jwt")); 
     };
 
     window.addEventListener("authUpdated", updateAuthState);
@@ -42,7 +41,7 @@ export default function Header() {
           });
           setUser(userData);
         } else {
-          setUser(null); // ✅ Ensures logout clears user state
+          setUser(null); 
         }
       } catch (err) {
         setError("Failed to fetch header data");
@@ -51,13 +50,13 @@ export default function Header() {
     }
 
     fetchData();
-  }, [jwt]); // ✅ Re-fetch when JWT changes
+  }, [jwt]); 
 
   function handleLogout() {
-    localStorage.removeItem("jwt"); // ✅ Remove JWT
-    setUser(null); // ✅ Clears user state
+    localStorage.removeItem("jwt");
+    setUser(null); 
 
-    window.dispatchEvent(new Event("authUpdated")); // ✅ Notify header to update
+    window.dispatchEvent(new Event("authUpdated")); 
     router.push("/login");
   }
 
@@ -73,7 +72,6 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header__left">
-        {/* Logo Section */}
         {header.logo?.image?.url && (
           <Link href="/" className="header__logo-link">
             <StrapiImage src={header.logo.image.url} alt={header.logo.logoText || "Logo"} width={120} height={120} />
@@ -81,7 +79,6 @@ export default function Header() {
           </Link>
         )}
 
-        {/* Navigation Link */}
         {header.link?.href && (
           <nav>
             <Link href={header.link.href} target={header.link.isExternal ? "_blank" : "_self"}>
@@ -90,15 +87,19 @@ export default function Header() {
           </nav>
         )}
 
-        {/* Admin Panel Button - Styled Same as Concedii */}
         {user?.role?.name === "Admin" && (
           <Link href="/admin" className="header__button concedii-btn">
             Admin Panel
           </Link>
         )}
+
+        {user?.role?.name === "Admin" && (
+          <Link href="/zile-libere" className="header__button concedii-btn">
+            Zile Libere
+          </Link>
+        )}
       </div>
 
-      {/* Right Section (User & Logout) */}
       <div className="header__right">
         {jwt && user ? (
           <>

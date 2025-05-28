@@ -12,26 +12,26 @@ export default function ListaConcedii() {
     useEffect(() => {
         async function fetchData() {
             try {
-                console.log("🚀 Fetching leave days..."); // ✅ Log fetch start
+                console.log("🚀 Fetching leave days...");
                 setLoading(true);
                 setError(null);
 
                 const { leaveDays } = await getLeaveDays();
 
-                console.log("✅ Received Leave Days:", leaveDays); // ✅ Log fetched data
+                console.log("✅ Received Leave Days: ivexnricfer", leaveDays);
                 setLeaveDays(leaveDays || []);
             } catch (err) {
-                console.error("❌ Error fetching leave days:", err); // ✅ Log error
+                console.error("❌ Error fetching leave days:", err);
                 setError("Failed to load leave days.");
             } finally {
-                console.log("🔄 Fetch process completed."); // ✅ Log completion
+                console.log("🔄 Fetch process completed.");
                 setLoading(false);
             }
         }
         fetchData();
     }, []);
 
-    console.log("📡 Current Leave Days State:", leaveDays); // ✅ Log state changes
+    console.log("📡 Current Leave Days State:", leaveDays);
     console.log("📡 Leave Days Count:", leaveDays.length);
 
 
@@ -44,19 +44,19 @@ export default function ListaConcedii() {
                 {error && <p style={{ color: "red" }}>{error}</p>}
 
                 {!loading && !error && Array.isArray(leaveDays) && leaveDays.length > 0 ? (
-    <ul>
-    {leaveDays.map((leave, idx) => (
-        <li key={`leave-day-${idx}`}>
-            {leave.firstDay ? new Date(leave.firstDay).toLocaleDateString() : "No Date"} -
-            {leave.lastDay ? new Date(leave.lastDay).toLocaleDateString() : "No Date"} 
-            ({leave.status || "Pending"})
-        </li>
-    ))}
-</ul>
+                    <ul>
+                        {leaveDays.map((leave, idx) => (
+                            <li key={`leave-day-${idx}`}>
+                                {leave.firstDay ? new Date(leave.firstDay).toLocaleDateString() : "No Date"} -
+                                {leave.lastDay ? new Date(leave.lastDay).toLocaleDateString() : "No Date"}
+                                ({leave.status || "Pending"})
+                            </li>
+                        ))}
+                    </ul>
 
-) : (
-    !loading && <p>❌ No leave days found.</p>
-)}
+                ) : (
+                    !loading && <p>❌ No leave days found.</p>
+                )}
 
             </div>
         </div>

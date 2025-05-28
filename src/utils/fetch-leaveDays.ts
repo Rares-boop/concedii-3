@@ -10,17 +10,16 @@ export async function getLeaveDays(): Promise<{ leaveDays?: LeaveDays[]; user?: 
     let jwt: string | null =  localStorage.getItem("jwt");
     console.log("🔑 JWT Token bytfrt:", jwt);
 
-
-    /*const userData = await fetchApi("users/me?populate=role&populate=leave_days", {
-        headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
-    });*/
-
     const query = qs.stringify(
-    {
-        populate: ["role", "leave_days"],
+  {
+    populate: {
+      role: true,
+      leave_days: true,
     },
-    { encodeValuesOnly: true }
+  },
+  { encodeValuesOnly: true }
 );
+
 
 const userData = await fetchApi(`users/me?${query}`, {
     headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
@@ -38,3 +37,5 @@ const userData = await fetchApi(`users/me?${query}`, {
     return { leaveDays: undefined, user: undefined };
   }
 }
+
+
