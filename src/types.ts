@@ -35,12 +35,23 @@ export enum RequestStatus {
   REJECTED = "Rejected",
 }
 
-export interface LeaveDays {
+/*export interface LeaveDays {
   firstDay: string;
   lastDay: string;
   addedAt: string;
   statusRequest: RequestStatus;
+}*/
+
+export interface LeaveDays {
+  id: number;
+  firstDay: string;
+  lastDay: string;
+  statusRequest: RequestStatus,
+  user?: {
+    email: string;
+  };
 }
+
 
 
 export interface Header {
@@ -55,7 +66,8 @@ export interface Footer {
   date: string;
 }
 
-export interface PublicHolidays{
+export interface PublicHolidays {
   holidayName: string;
   date: string;
+  recurring?: boolean; // ✅ Add this line
 }

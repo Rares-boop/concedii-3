@@ -11,6 +11,8 @@ export default function HolidaysPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [holidayName, setHolidayName] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [isRecurring, setIsRecurring] = useState(false);
+
 
   useEffect(() => {
     async function fetchHolidays() {
@@ -53,7 +55,9 @@ export default function HolidaysPage() {
         body: JSON.stringify({
           data: {
             holidayName,
-            date: selectedDate.toISOString().split("T")[0], // format: YYYY-MM-DD
+            //date: selectedDate.toISOString().split("T")[0],
+            date: selectedDate.toLocaleDateString("en-CA"), // YYYY-MM-DD in local time
+            recurring: isRecurring,
           },
         }),
       });
@@ -74,6 +78,20 @@ export default function HolidaysPage() {
       alert("❌ Error saving public holiday.");
     }
   }
+
+  function getDisplayDate(holiday: PublicHolidays): string {
+  const [year, month, day] = holiday.date.split("-");
+  const date = new Date(Number(year), Number(month) - 1, Number(day)); // ✅ local time
+
+  if (holiday.recurring) {
+    const currentYear = new Date().getFullYear();
+    date.setFullYear(currentYear);
+  }
+
+  return date.toLocaleDateString();
+}
+
+
 
   return (
     <AuthGuard>
@@ -97,9 +115,11 @@ export default function HolidaysPage() {
       <ul>
         {publicHolidays.length > 0 ? (
           publicHolidays.map((holiday) => (
-            <li key={holiday.date}>
-              {holiday.holidayName} - {holiday.date}
+            <li key={`${holiday.holidayName}-${holiday.date}`}>
+              {holiday.holidayName} - {getDisplayDate(holiday)}{" "}
+              {holiday.recurring && <span style={{ color: "#28a745" }}>🔁</span>}
             </li>
+
           ))
         ) : (
           <div>
@@ -121,7 +141,7 @@ export default function HolidaysPage() {
             borderRadius: "12px",
             boxShadow: "0px 6px 15px rgba(0,0,0,0.3)",
             width: "400px",
-            height: "550px",
+            height: "650px",
             zIndex: 1000,
           }}
         >
@@ -139,6 +159,19 @@ export default function HolidaysPage() {
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
           />
+
+          <div style={{ marginTop: "15px" }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={isRecurring}
+                onChange={(e) => setIsRecurring(e.target.checked)}
+                style={{ marginRight: "8px" }}
+              />
+              🔁 This holiday recurs every year
+            </label>
+          </div>
+
 
           <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
             <button
