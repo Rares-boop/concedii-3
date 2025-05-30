@@ -20,8 +20,10 @@ export async function getPublicHolidays(): Promise<{ publicHolidays?: PublicHoli
 
     // ✅ Correct formatting of holidays before returning
     const formattedHolidays: PublicHolidays[] = holidaysData.data.map((holiday: PublicHolidays) => ({
+      documentId: holiday.documentId,
       holidayName: holiday.holidayName,
       date: holiday.date,
+      recurring: holiday.recurring ?? false,
     }));
 
     console.log("📊 Formatted Public Holidays:", formattedHolidays);

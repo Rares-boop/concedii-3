@@ -1,3 +1,4 @@
+import { Numerals } from "react-day-picker";
 
 export interface Logo {
   logoText: string;
@@ -67,7 +68,8 @@ export interface Footer {
 }
 
 export interface PublicHolidays {
+  documentId: string;
   holidayName: string;
   date: string;
-  recurring?: boolean; // ✅ Add this line
+  recurring?: boolean; 
 }

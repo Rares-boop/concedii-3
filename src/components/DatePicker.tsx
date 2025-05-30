@@ -47,7 +47,7 @@ export default function MyDatePicker({ selected, setSelected, refreshLeaveDays }
       }
 
       await response.json();
-      await refreshLeaveDays(); // ✅ full refresh
+      await refreshLeaveDays();
 
       alert("✅ Leave request submitted!");
       setSelected({ from: undefined, to: undefined });
@@ -58,7 +58,9 @@ export default function MyDatePicker({ selected, setSelected, refreshLeaveDays }
   }
 
   return (
-    <div>
+    <div className="bg-white rounded-xl shadow p-6 space-y-6 w-full">
+      <h2 className="text-xl font-semibold">Selectează perioada de concediu</h2>
+
       <DayPicker
         mode="range"
         selected={selected}
@@ -73,30 +75,20 @@ export default function MyDatePicker({ selected, setSelected, refreshLeaveDays }
         max={14}
       />
 
-      <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
-        <button onClick={handleReset} style={resetStyle}>Reset Selection</button>
-        <button onClick={handleAddSelection} style={addStyle}>Add Selection</button>
+      <div className="flex gap-4">
+        <button
+          onClick={handleReset}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-semibold transition"
+        >
+          Reset Selection
+        </button>
+        <button
+          onClick={handleAddSelection}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold transition"
+        >
+          Add Selection
+        </button>
       </div>
     </div>
   );
 }
-
-const resetStyle = {
-  padding: "8px 16px",
-  backgroundColor: "#ff4d4d",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontWeight: "bold",
-};
-
-const addStyle = {
-  padding: "8px 16px",
-  backgroundColor: "#28a745",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontWeight: "bold",
-};

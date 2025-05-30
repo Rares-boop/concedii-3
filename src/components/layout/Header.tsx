@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -16,17 +17,13 @@ export default function Header() {
     typeof window !== "undefined" ? localStorage.getItem("jwt") : null
   );
 
-
   useEffect(() => {
     const updateAuthState = () => {
-      setJwt(localStorage.getItem("jwt")); 
+      setJwt(localStorage.getItem("jwt"));
     };
 
     window.addEventListener("authUpdated", updateAuthState);
-
-    return () => {
-      window.removeEventListener("authUpdated", updateAuthState);
-    };
+    return () => window.removeEventListener("authUpdated", updateAuthState);
   }, []);
 
   useEffect(() => {
@@ -41,7 +38,7 @@ export default function Header() {
           });
           setUser(userData);
         } else {
-          setUser(null); 
+          setUser(null);
         }
       } catch (err) {
         setError("Failed to fetch header data");
@@ -50,66 +47,83 @@ export default function Header() {
     }
 
     fetchData();
-  }, [jwt]); 
+  }, [jwt]);
 
   function handleLogout() {
     localStorage.removeItem("jwt");
-    setUser(null); 
-
-    window.dispatchEvent(new Event("authUpdated")); 
+    setUser(null);
+    window.dispatchEvent(new Event("authUpdated"));
     router.push("/login");
   }
 
-  if (error) return <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>;
+  if (error) return <p className="text-red-600 font-bold">{error}</p>;
   if (!header) return null;
 
-  console.log("🔍 JWT from localStorage:", localStorage.getItem("jwt"));
-  console.log("🔍 User data:", user);
-
-
-
-
   return (
-    <header className="header">
-      <div className="header__left">
+    <header className="bg-slate-800 text-white px-6 py-3 shadow flex justify-between items-center">
+      {/* Left: Logo and Navigation */}
+      <div className="flex items-center gap-6">
         {header.logo?.image?.url && (
-          <Link href="/" className="header__logo-link">
-            <StrapiImage src={header.logo.image.url} alt={header.logo.logoText || "Logo"} width={120} height={120} />
-            {header.logo.logoText && <h1>{header.logo.logoText}</h1>}
+          <Link href="/" className="flex items-center gap-3">
+            <StrapiImage
+              src={header.logo.image.url}
+              alt={header.logo.logoText || "Logo"}
+              width={64}
+              height={48}
+              className="h-12 w-16 object-cover rounded-md"
+            />
           </Link>
         )}
 
+        {/* Main link (concedii) */}
         {header.link?.href && (
-          <nav>
-            <Link href={header.link.href} target={header.link.isExternal ? "_blank" : "_self"}>
-              {header.link.text}
+          <Link
+            href={header.link.href}
+            target={header.link.isExternal ? "_blank" : "_self"}
+            className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold shadow transition"
+          >
+            {header.link.text || "concedii"}
+          </Link>
+        )}
+
+        {/* Admin buttons match "concedii" style */}
+        {user?.role?.name === "Admin" && (
+          <>
+            <Link
+              href="/admin"
+              className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold shadow transition"
+            >
+              Admin Panel
             </Link>
-          </nav>
-        )}
-
-        {user?.role?.name === "Admin" && (
-          <Link href="/admin" className="header__button concedii-btn">
-            Admin Panel
-          </Link>
-        )}
-
-        {user?.role?.name === "Admin" && (
-          <Link href="/zile-libere" className="header__button concedii-btn">
-            Zile Libere
-          </Link>
+            <Link
+              href="/zile-libere"
+              className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md font-semibold shadow transition"
+            >
+              Zile Libere
+            </Link>
+          </>
         )}
       </div>
 
-      <div className="header__right">
+      {/* Right: User email and logout */}
+      <div className="flex items-center gap-4">
         {jwt && user ? (
           <>
-
-
-            <Link href="/user" className="header__user-email">{user.email}</Link>
-            <button className="logout-button" onClick={handleLogout}>Logout</button>
+            <Link
+              href="/user"
+              className="text-sm text-gray-200 hover:text-white transition"
+            >
+              {user.email}
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold shadow transition"
+            >
+              Logout
+            </button>
           </>
         ) : (
-          <p style={{ color: "red", fontWeight: "bold" }}>❌ User not logged in!</p>
+          <p className="text-red-400 font-bold">❌ User not logged in!</p>
         )}
       </div>
     </header>
