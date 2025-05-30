@@ -8,7 +8,6 @@ export async function getFooterData(): Promise<{ footer: Footer }> {
     throw new Error("API URL is missing in environment variables!");
   }
 
-  // Fetch Footer Data
   const footerQuery = qs.stringify(
     {
       populate: {

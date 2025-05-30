@@ -1,4 +1,4 @@
-// utils/fetch-users-with-leaves.ts
+
 
 export async function getAllLeaveDays() {
   const jwt = localStorage.getItem("jwt");
@@ -16,5 +16,5 @@ export async function getAllLeaveDays() {
   }
 
   const users = await res.json();
-  return users; // Each user object should now include a `leaveDays` array
+  return users; 
 }

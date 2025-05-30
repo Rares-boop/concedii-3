@@ -5,6 +5,9 @@ import AuthGuard from "@/components/AuthGuard";
 import { getPublicHolidays } from "@/utils/fetch-publicHolidays";
 import { PublicHolidays } from "@/types";
 import MyDatePickerNoButtons from "@/components/DatePickerNoButtons";
+import { getUser } from "@/utils/fetch-user";
+import { useRouter } from "next/navigation";
+
 
 export default function HolidaysPage() {
   const [publicHolidays, setPublicHolidays] = useState<PublicHolidays[]>([]);
@@ -14,6 +17,20 @@ export default function HolidaysPage() {
   const [isRecurring, setIsRecurring] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editDocumentId, setEditDocumentId] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    async function checkAccess() {
+      const { user } = await getUser();
+      if (user?.role?.name !== "Admin") {
+        router.push("/");
+      }
+    }
+
+    checkAccess();
+  }, []);
+
 
   useEffect(() => {
     async function fetchHolidays() {
@@ -139,6 +156,16 @@ export default function HolidaysPage() {
     setIsRecurring(false);
   }
 
+  const modalButtonStyle = {
+    width: "150px",
+    padding: "12px 0",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "16px",
+  };
+
   return (
     <AuthGuard>
       <div className="max-w-4xl mx-auto px-6 py-10">
@@ -234,14 +261,9 @@ export default function HolidaysPage() {
             <button
               onClick={closeModal}
               style={{
-                padding: "12px 30px",
+                ...modalButtonStyle,
                 backgroundColor: "#dc3545",
                 color: "white",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: "16px",
               }}
             >
               Close
@@ -249,20 +271,13 @@ export default function HolidaysPage() {
 
             <button
               onClick={() =>
-                isEditMode
-                  ? handleEditModal()
-                  : handleAddModal(holidayName, selectedDate)
+                isEditMode ? handleEditModal() : handleAddModal(holidayName, selectedDate)
               }
               disabled={!holidayName || !selectedDate}
               style={{
-                padding: "12px 30px",
+                ...modalButtonStyle,
                 backgroundColor: "#28a745",
                 color: "white",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: "16px",
               }}
             >
               {isEditMode ? "Edit Holiday" : "Add Holiday"}

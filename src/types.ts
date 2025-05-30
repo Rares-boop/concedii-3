@@ -1,5 +1,3 @@
-import { Numerals } from "react-day-picker";
-
 export interface Logo {
   logoText: string;
   image: { url: string };
@@ -10,14 +8,6 @@ export interface Link {
   href: string;
   isExternal: boolean;
 }
-
-{/* export interface User {
-  email: string;
-  href: string;
-  isExternal: boolean;
-  image: { url: string };
-} */}
-
 
 export interface User {
   id: string;
@@ -36,13 +26,6 @@ export enum RequestStatus {
   REJECTED = "Rejected",
 }
 
-/*export interface LeaveDays {
-  firstDay: string;
-  lastDay: string;
-  addedAt: string;
-  statusRequest: RequestStatus;
-}*/
-
 export interface LeaveDays {
   documentId: string;
   id: number;
@@ -53,8 +36,6 @@ export interface LeaveDays {
     email: string;
   };
 }
-
-
 
 export interface Header {
   logo: Logo;

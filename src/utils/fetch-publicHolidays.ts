@@ -18,7 +18,6 @@ export async function getPublicHolidays(): Promise<{ publicHolidays?: PublicHoli
       throw new Error("❌ Public holidays data is missing or incorrectly formatted.");
     }
 
-    // ✅ Correct formatting of holidays before returning
     const formattedHolidays: PublicHolidays[] = holidaysData.data.map((holiday: PublicHolidays) => ({
       documentId: holiday.documentId,
       holidayName: holiday.holidayName,
