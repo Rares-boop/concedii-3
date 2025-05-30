@@ -10,10 +10,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
 
   useEffect(() => {
-    const jwt = localStorage.getItem("jwt"); // ✅ Check standalone JWT
+    const jwt = localStorage.getItem("jwt"); 
 
     if (!jwt) {
-      router.push("/login"); // ✅ Redirect if JWT is missing
+      router.push("/login"); 
     }
   }, [router]);
 

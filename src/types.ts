@@ -44,6 +44,7 @@ export enum RequestStatus {
 }*/
 
 export interface LeaveDays {
+  documentId: string;
   id: number;
   firstDay: string;
   lastDay: string;

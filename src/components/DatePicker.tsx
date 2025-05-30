@@ -70,9 +70,6 @@ export default function MyDatePicker({ selected, setSelected, refreshLeaveDays }
             ? `Selected range: ${selected.from.toLocaleDateString()} → ${selected.to.toLocaleDateString()}`
             : "Pick a date range."
         }
-        required
-        min={2}
-        max={14}
       />
 
       <div className="flex gap-4">
