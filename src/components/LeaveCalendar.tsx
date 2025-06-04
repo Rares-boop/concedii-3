@@ -22,14 +22,17 @@ interface Props {
 }
 
 export default function LeaveCalendar({ users }: Props) {
-  const [dateToColors, setDateToColors] = useState<Record<string, string[]>>({});
+  const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
-    const map: Record<string, string[]> = {};
+    const tempEvents: any[] = [];
 
-    users.forEach((user) => {
+    let zIndex = 1; // ensure proper stacking order
+
+    users.forEach((user, userIndex) => {
       const color = user.color || "#888";
-      user.leave_days?.forEach((leave) => {
+
+      user.leave_days?.forEach((leave, leaveIndex) => {
         if (leave.statusRequest !== "Approved") return;
 
         const start = new Date(leave.firstDay);
@@ -37,15 +40,23 @@ export default function LeaveCalendar({ users }: Props) {
         const current = new Date(start);
 
         while (current <= end) {
-          const key = current.toISOString().split("T")[0];
-          if (!map[key]) map[key] = [];
-          if (!map[key].includes(color)) map[key].push(color);
+          const day = current.toISOString().split("T")[0];
+
+          tempEvents.push({
+            start: day,
+            allDay: true,
+            display: "block",
+            backgroundColor: color,
+            className: `underline-layer-${userIndex}`,
+            id: `${user.id}-${day}-${leaveIndex}`,
+          });
+
           current.setDate(current.getDate() + 1);
         }
       });
     });
 
-    setDateToColors(map);
+    setEvents(tempEvents);
   }, [users]);
 
   return (
@@ -53,31 +64,8 @@ export default function LeaveCalendar({ users }: Props) {
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
-        events={[]} // visual only
+        events={events}
         height="auto"
-        dayCellContent={(arg) => {
-          const dateKey = arg.date.toISOString().split("T")[0];
-          const colors = dateToColors[dateKey] || [];
-
-          return (
-            <div className="relative w-full h-full flex flex-col items-center pt-3 pb-2">
-              <span className="text-[1.4rem] font-bold z-10">{arg.dayNumberText}</span>
-              <div className="mt-[12px] flex flex-col gap-[4px] w-full px-[10%]">
-                {colors.map((color, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      height: "5px",
-                      backgroundColor: color,
-                      borderRadius: "4px",
-                      width: "100%",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        }}
       />
     </div>
   );
