@@ -219,6 +219,30 @@ nav a:hover {
     text-align: left;
 }
 
+/* 🔴 Public holidays - red square */
+.public-holiday {
+  background-color: #ff4d4d !important;
+  color: white !important;
+  border-radius: 6px;
+}
+
+/* 📅 Leave days - underlined */
+.leave-day {
+  position: relative;
+}
+
+.leave-day::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  background-color: currentColor;
+  border-radius: 3px;
+}
+
+
 
 
 
