@@ -108,7 +108,7 @@ export default function HomePage() {
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
             Welcome to the Home Page
           </h1>
-          <MyDatePickerWithColours />
+          <MyDatePickerWithColours users={users}/>
         </div>
 
         {/* User List + Leave Info */}

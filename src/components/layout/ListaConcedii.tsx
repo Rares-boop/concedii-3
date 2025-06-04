@@ -1,5 +1,3 @@
-"use client";
-
 import { DateRange } from "react-day-picker";
 import { LeaveDays } from "@/types";
 

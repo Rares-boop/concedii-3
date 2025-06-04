@@ -3,33 +3,54 @@
 import { useEffect, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
+import { getAllLeaveDays } from "@/utils/fetch-AllLeaveDays";
 
-export default function MyDatePickerWithColours() {
+interface Props {
+  users: { id: string; email: string; color?: string }[];
+}
+
+export default function MyDatePickerWithColours({ users }: Props) {
   const [selected, setSelected] = useState<Date>();
-  const [holidayDates, setHolidayDates] = useState<Date[]>([]);
+  const [highlightedDates, setHighlightedDates] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    async function fetchPublicHolidays() {
-      const jwt = localStorage.getItem("jwt");
-      if (!jwt) return;
-
+    async function fetchDays() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/public-holidays`, {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        });
+        const data = await getAllLeaveDays();
+        const days: Record<string, string> = {};
 
-        const data = await res.json();
-        const dates: Date[] = data.data.map((item: any) => new Date(item.date));
-        setHolidayDates(dates);
+        // Iterate through each user
+        for (const user of data) {
+          const userId = user.id;
+          const userEmail = user.email;
+          const userColor = users.find((u) => u.id === String(userId))?.color || "#888";
+
+          const leaveDays = user.leave_days || [];
+
+          for (const leave of leaveDays) {
+            if (leave.statusRequest !== "Approved") continue;
+
+            const start = new Date(leave.firstDay);
+            const end = new Date(leave.lastDay);
+            const current = new Date(start);
+
+            while (current <= end) {
+              const key = current.toDateString();
+              days[key] = userColor;
+              current.setDate(current.getDate() + 1);
+            }
+          }
+        }
+
+        console.log("✅ Highlighted days:", days);
+        setHighlightedDates(days);
       } catch (err) {
-        console.error("❌ Error fetching public holidays:", err);
+        console.error("❌ Error fetching leave days:", err);
       }
     }
 
-    fetchPublicHolidays();
-  }, []);
+    fetchDays();
+  }, [users]);
 
   return (
     <DayPicker
@@ -37,17 +58,18 @@ export default function MyDatePickerWithColours() {
       selected={selected}
       onSelect={setSelected}
       modifiers={{
-        holidays: holidayDates,
+        holidays: (date) => highlightedDates.hasOwnProperty(date.toDateString()),
       }}
       modifiersStyles={{
         holidays: {
-          backgroundColor: "#ff4d4f",
-          color: "white",
-          borderRadius: "0px",   
+          borderBottom: "3px solid red",
+          backgroundColor: "transparent",
+          borderRadius: "0px",
+          color: "#000",
         },
       }}
       styles={{
-        root: { width: "500px", height: "400px" },
+        root: { width: "500px", height: "500px" },
         day: { fontSize: "1.2rem", padding: "10px" },
         head_cell: { width: "60px" },
       }}
